@@ -1,0 +1,65 @@
+<web-app id="WebApp_ID" version="2.4"
+ 	xmlns="http://java.sun.com/xml/ns/j2ee"
+ 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ 	xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee
+ 				http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
+ 
+ <display-name>Spring4MVCHelloWorldDemo Web Application</display-name>
+
+<listener>
+
+<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+
+</listener>
+
+<listener>
+
+<listener-class>org.springframework.web.context.request.RequestContextListener</listener-class>
+
+</listener>
+
+ <servlet>
+ 	<servlet-name>tenantDispatcher</servlet-name>
+ 	<servlet-class>
+ 		com.tenant.impl.TenantDispatcherServletProxy
+ 	</servlet-class>
+ 
+ 	<load-on-startup>0</load-on-startup>
+ 	
+ </servlet>
+ 
+ <servlet-mapping>
+ 	<servlet-name>tenantDispatcher</servlet-name>
+ 	<url-pattern>/</url-pattern>
+ </servlet-mapping>
+
+ <context-param>
+	<param-name>contextConfigLocation</param-name>
+	<param-value>/WEB-INF/root-context.xml</param-value>
+ </context-param> 
+ 
+ <context-param>
+	<param-name>targetBeanName</param-name>
+	<param-value>tenantDelegatingFilterProxy</param-value>
+ </context-param>
+ 
+ 
+ <!-- 
+  <servlet>
+ 	<servlet-name>dispatcher</servlet-name>
+ 	<servlet-class>
+ 		org.springframework.web.servlet.DispatcherServlet
+ 	</servlet-class>
+ 	<init-param>
+ 		<param-name>contextConfigLocation</param-name>
+ 		<param-value>/WEB-INF/spring-servlet.xml</param-value>
+ 	</init-param>
+ 	<load-on-startup>1</load-on-startup>
+ </servlet>
+ 
+ <servlet-mapping>
+ 	<servlet-name>dispatcher</servlet-name>
+ 	<url-pattern>/</url-pattern>
+ </servlet-mapping>
+ -->
+</web-app>

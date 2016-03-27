@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.springframework.org/schema/beans"
+
+xmlns:context="http://www.springframework.org/schema/context"
+
+xsi:schemaLocation="http://www.springframework.org/schema/beans
+
+http://www.springframework.org/schema/beans/spring-beans.xsd
+
+http://www.springframework.org/schema/context
+
+http://www.springframework.org/schema/context/spring-context.xsd">
+
+<!-- This file is the ROOT context configuration. -->
+
+<!-- Beans defined here will be visible in all tenant child contexts. -->
+
+<context:annotation-config />
+
+<context:property-placeholder system-properties-mode="ENVIRONMENT" />
+
+<!-- Loads the tenant.properties file -->
+
+<bean id="tenantProperties" class="org.springframework.beans.factory.config.PropertiesFactoryBean">
+
+<property name="locations">
+
+<list>
+
+<value>${tenantProperties}</value>
+
+</list>
+
+</property>
+
+</bean>
+
+<!-- Loads the tenant configuration based on the supplied tenant.properties file -->
+
+<bean id="tenantsConfiguration" class="com.tenant.impl.TenantsConfiguration">
+
+<constructor-arg ref="tenantProperties"/>
+
+<constructor-arg value="${tenantProperties}" />
+
+</bean>
+
+<!-- The TenantContextProvider implementation responsible for determining the tenant code -->
+
+<bean id="tenantContextProvider" class="com.tenant.impl.HostnameTenantContextProviderImpl">
+
+<constructor-arg ref="tenantsConfiguration" />
+
+</bean>
+
+<!-- The TenantDispatcherServlet through which all request come in and are further dispatched
+
+to the appropriate tenant spring DispatcherServlet -->
+
+<bean id="tenantDispatchServlet" class="com.tenant.impl.TenantDispatcherServlet">
+
+<constructor-arg ref="tenantsConfiguration" />
+
+<constructor-arg ref="tenantContextProvider" />
+
+</bean>
+
+<!-- Delegates the security filter chain lookup to proper tenant context -->
+
+<bean id="springSecurityFilterChain" class="com.tenant.impl.TenantDelegatingFilterProxy">
+
+<constructor-arg ref="tenantDispatchServlet" />
+
+<constructor-arg ref="tenantContextProvider" />
+
+</bean>
+
+
+</beans>
